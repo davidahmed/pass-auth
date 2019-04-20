@@ -11,6 +11,8 @@ import re
 from os import listdir
 from os.path import isfile, join
 
+from passauth import utils
+
 
 def getFields(entry:str)->dict:
     
@@ -78,3 +80,21 @@ class UserData:
         with open(self.filepath + self.onlyfiles[user], 'r') as f:
             content = f.read().replace("\'", '"').replace('}{', '}#{').split('#')
             return [getFields(_) for _ in content]
+        
+    def getWrangledData(self, type, min_entries=0, padding=None):
+        data = []
+        for i in range(len(self)):
+            data.append(self.getUserData(i))
+            
+        if min_entries !=0:    
+            data = list(filter(lambda x: len(x) >= min_entries, data))
+        
+        if type in ['mouse_movements', 'mouse']:
+            data = [[utils.pad(each['mouseMovements'],n=padding), user] for user in range(len(data))
+                for each in data[user]]
+            
+        elif type in ['kb', 'keystroke_dynamics', 'keyboard']:
+            data = [[each['usernameFieldLogs'], each['passwordFieldLogs'], user] for user in range(len(data))
+                for each in data[user]]
+            
+        return data

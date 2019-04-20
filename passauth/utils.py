@@ -7,6 +7,8 @@ Created on Mon Apr  8 15:42:47 2019
 """
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+import math
 
 
 def plotUserMouse3D(mouseMovement):
@@ -29,3 +31,37 @@ def plotUserMouseScatterMultiple(user, n=5):
     for i in range(n):
         plotUserMouseScatter(pd.DataFrame(user[i]['mouseMovements']), (10,1,i+1))
 
+
+
+def pad(arr, n):
+    """
+    If arr is not equal to n in length, fill it with zero
+    
+    >>>pad([1, 1], 5)
+    [1, 1, 1, 1, 1]
+    """
+    if n == None:
+        arr
+    if n < len(arr):
+        arr = arr[:n]
+        
+    else:
+        arr = arr + ((n-len(arr)) * [len(arr[-1]) * [0]])
+        #arr = arr + ((n-len(arr)) * [arr[-1]])
+        
+    return arr
+
+
+def logify(event):
+    return [event[0]* math.log(event[2]+1), event[1]* math.log(event[2]+1)]
+
+
+def normalize(arr):
+    arr = np.array(arr)
+    mean = arr.mean()
+    std = arr.std()
+    return (arr-mean)/std
+  
+    
+def bin(arr):
+    return np.histogram(arr, range=(-100,100), bins=100)[0]
